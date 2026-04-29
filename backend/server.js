@@ -38,19 +38,19 @@ app.use(session({
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.use('/api/auth', authRoutes);
-app.use('/api/companies', companyRoutes);
-app.use('/api/products', productRoutes);
-app.use('/', publicRoutes);
+const BASE = '/02_module_b';
 
+app.use(`${BASE}/api/auth`, authRoutes);
+app.use(`${BASE}/api/companies`, companyRoutes);
+app.use(`${BASE}/api/products`, productRoutes);
+app.use(`${BASE}`, publicRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 mongoose.connect(MONGO_URI)
-.then(()=> {
-    console.log("MONGODB CONNNECTED");
-    app.listen(PORT, () => console.log(`API Listening on Port : ${PORT}`));
+.then(() => {
+    app.listen(PORT);
+    console.log("MongoDB Connected");
 })
 .catch(err => {
-    console.error("Mongo Connection Error : ", err.message);
     process.exit(1);
 });
-
