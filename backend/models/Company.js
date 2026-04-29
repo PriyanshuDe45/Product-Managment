@@ -10,6 +10,7 @@ const companySchema = new mongoose.Schema({
     companyName : { type: String, required: true, trim: true},
     companyAddress: { type: String, trim: true},
     companyTelephone: { type: String, trim:true},
+    companyEmail: { type: String, trim: true},
     owner:   { type: contactSchema, default: () => ({}) },
     contact: { type: contactSchema, default:()=>({})},
     deactivated: { type: Boolean, default: false}

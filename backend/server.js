@@ -4,13 +4,16 @@ import cors from "cors";
 import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 import authRoutes from './routes/auth.js';
-import companyRoutes from './routes/company.js';
+import companyRoutes from './routes/companies.js';
 import productRoutes from './routes/product.js';
 import publicRoutes from './routes/public.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.URL));
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
 const PORT = process.env.PORT || 5000;
@@ -23,7 +26,7 @@ app.use(cors(({
 })));
 
 app.use(express.json());
-app.use(express.urlencoded({exteneded: true}));
+app.use(express.urlencoded({extended: true}));
 
 app.use(session({
     secret: SESSION_SECRET,
@@ -44,7 +47,7 @@ app.use('/', publicRoutes);
 mongoose.connect(MONGO_URI)
 .then(()=> {
     console.log("MONGODB CONNNECTED");
-    app.listen(PORT, () => console.log('API Listening on Port : ${PORT}'));
+    app.listen(PORT, () => console.log(`API Listening on Port : ${PORT}`));
 })
 .catch(err => {
     console.error("Mongo Connection Error : ", err.message);

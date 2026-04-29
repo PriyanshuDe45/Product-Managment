@@ -27,7 +27,7 @@ const productSchema = new mongoose.Schema({
     },
     image: { type: String, default : null},
     company: {type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true},
-    hiddden: {type: Boolean, default: false}
+    hidden: {type: Boolean, default: false}
 },{timestamps: true});
     
 export default mongoose.model('Product',productSchema);
