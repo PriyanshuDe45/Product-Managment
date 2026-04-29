@@ -1,79 +1,34 @@
 import { useEffect, useState } from 'react';
 
-const B = import.meta.env.VITE_API_URL || '/02_module_b';
+const B = import.meta.env.VITE_API_URL ;
+
+const j = (p, o = {}) => fetch(B + p, { credentials: 'include', ...o }).then(r => r.json());
+const jb = (p, m, b) => j(p, { method: m, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
+const fb = (p, m, d, img) => { const f = new FormData(); f.append('data', JSON.stringify(d)); if (img) f.append('image', img); return j(p, { method: m, body: f }); };
 
 export const useAuth = () => {
-  const [isAdmin, set] = useState(null);
-  useEffect(() => {
-    fetch(`${B}/api/auth/me`, { credentials: 'include' })
-      .then(r => r.json())
-      .then(d => set(!!d.isAdmin))
-      .catch(() => set(false));
-  }, []);
-  return isAdmin;
+  const [a, s] = useState(null);
+  useEffect(() => { j('/api/auth/me').then(d => s(!!d.isAdmin)).catch(() => s(false)); }, []);
+  return a;
 };
 
-export const login = (pass) =>
-  fetch(`${B}/api/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ passphrase: pass }) }).then(r => r.ok);
+export const login = (p) => fetch(B + '/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ passphrase: p }) }).then(r => r.ok);
+export const logout = () => j('/api/auth/logout', { method: 'POST' });
 
-export const logout = () =>
-  fetch(`${B}/api/auth/logout`, { method: 'POST', credentials: 'include' });
+export const getProducts = () => j('/api/products');
+export const getProduct = (g) => j('/api/products/' + g);
+export const createProduct = (d, i) => fb('/api/products', 'POST', d, i);
+export const updateProduct = (g, d, i) => fb('/api/products/' + g, 'PUT', d, i);
+export const hideProduct = (g) => j('/api/products/' + g + '/hide', { method: 'POST' });
+export const unhideProduct = (g) => j('/api/products/' + g + '/unhide', { method: 'POST' });
+export const deleteProduct = (g) => j('/api/products/' + g, { method: 'DELETE' });
 
-export const getProducts = () =>
-  fetch(`${B}/api/products`, { credentials: 'include' }).then(r => r.json());
+export const getCompanies = (d = false) => j('/api/companies?deactivated=' + d);
+export const getCompany = (i) => j('/api/companies/' + i);
+export const createCompany = (d) => jb('/api/companies', 'POST', d);
+export const updateCompany = (i, d) => jb('/api/companies/' + i, 'PUT', d);
+export const deactivateCompany = (i) => j('/api/companies/' + i + '/deactivate', { method: 'POST' });
+export const activateCompany = (i) => j('/api/companies/' + i + '/activate', { method: 'POST' });
 
-export const getProduct = (gtin) =>
-  fetch(`${B}/api/products/${gtin}`, { credentials: 'include' }).then(r => r.json());
-
-export const createProduct = (data, img) => {
-  const fd = new FormData();
-  fd.append('data', JSON.stringify(data));
-  if (img) fd.append('image', img);
-  return fetch(`${B}/api/products`, { method: 'POST', credentials: 'include', body: fd }).then(r => r.json());
-};
-
-export const updateProduct = (gtin, data, img) => {
-  const fd = new FormData();
-  fd.append('data', JSON.stringify(data));
-  if (img) fd.append('image', img);
-  return fetch(`${B}/api/products/${gtin}`, { method: 'PUT', credentials: 'include', body: fd }).then(r => r.json());
-};
-
-export const hideProduct = (gtin) =>
-  fetch(`${B}/api/products/${gtin}/hide`, { method: 'POST', credentials: 'include' }).then(r => r.json());
-
-export const deleteProduct = (gtin) =>
-  fetch(`${B}/api/products/${gtin}`, { method: 'DELETE', credentials: 'include' }).then(r => r.json());
-
-export const deleteImage = (gtin) =>
-  fetch(`${B}/api/products/${gtin}/image`, { method: 'DELETE', credentials: 'include' }).then(r => r.json());
-
-export const getCompanies = (deactivated = false) =>
-  fetch(`${B}/api/companies?deactivated=${deactivated}`, { credentials: 'include' }).then(r => r.json());
-
-export const getCompany = (id) =>
-  fetch(`${B}/api/companies/${id}`, { credentials: 'include' }).then(r => r.json());
-
-export const createCompany = (data) =>
-  fetch(`${B}/api/companies`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(data) }).then(r => r.json());
-
-export const updateCompany = (id, data) =>
-  fetch(`${B}/api/companies/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(data) }).then(r => r.json());
-
-export const deactivateCompany = (id) =>
-  fetch(`${B}/api/companies/${id}/deactivate`, { method: 'POST', credentials: 'include' }).then(r => r.json());
-
-export const activateCompany = (id) =>
-  fetch(`${B}/api/companies/${id}/activate`, { method: 'POST', credentials: 'include' }).then(r => r.json());
-
-export const getPublicProducts = (page = 1, query = '') => {
-  const q = new URLSearchParams({ page });
-  if (query) q.set('query', query);
-  return fetch(`${B}/products.json?${q}`).then(r => r.json());
-};
-
-export const getPublicProduct = (gtin) =>
-  fetch(`${B}/01/${gtin}.json`).then(r => r.ok ? r.json() : null);
-
-export const verifyGTINs = (gtins) =>
-  fetch(`${B}/api/verify`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ gtins }) }).then(r => r.json());
+export const getPublicProduct = (g) => fetch(B + '/products/' + g + '.json').then(r => r.ok ? r.json() : null);
+export const verifyGTINs = (g) => jb('/api/verify', 'POST', { gtins: g });

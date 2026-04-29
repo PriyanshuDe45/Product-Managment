@@ -1,25 +1,40 @@
-This is a Product Managment Platform where the complete Segment is divided into two parts
+Product Management Platform
 
-Frontend - 
-npm install
-npm run dev
-
-Backend- 
-npm install
-npm run dev
+Admin can manage companies and products; the public can verify GTINs and view a public product page.
 
 
-So The Frotnend and the Backend Folder have seperate Env which we need to update to get the system running
+Environment variables
+
+Both apps read from a local `.env` file. Sample files (`.env.example`) are committed.
+
+Backend — `backend/.env`
+
+MONGO_URI=mongodb://localhost:27017/products_management
+SESSION_SECRET=change-me
+PORT=5000
 
 
-env Backend
 
 
-MONGO_URI=mongodb://priyanshude65_db_user:Mzra4eI93dqe2iNs@ac-sckstac-shard-00-00.xbr4vm3.mongodb.net:27017,ac-sckstac-shard-00-01.xbr4vm3.mongodb.net:27017,ac-sckstac-shard-00-02.xbr4vm3.mongodb.net:27017/?ssl=true&replicaSet=atlas-10l1rb-shard-0&authSource=admin&appName=IndiaSkills
-SESSION_SECRET=admin
-PORT=5001
+ Frontend — `frontend/.env`
 
-
-Env Frontend
 VITE_API_URL=/02_module_b
+VITE_BACKEND_URL=http://localhost:5000
+
+
+
+cd backend
+npm install
+npm run dev      
+
+```
+
+Backend listens on `http://localhost:5000` and serves the API under `/02_module_b/*`.
+
+
+Frontend
+
+cd frontend
+npm install
+npm run dev      
 
